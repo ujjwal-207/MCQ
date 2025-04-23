@@ -95,8 +95,3 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-## 🙏 Acknowledgments
-
-- OpenAI for providing the LLM technology
-- LangChain for the framework that makes LLM integration easier
-- Streamlit for the simple yet powerful UI framework
