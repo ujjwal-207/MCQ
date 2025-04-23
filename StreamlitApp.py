@@ -10,8 +10,8 @@ from src.mcqgenerator.logger import logging
 
 #loading json file
 
-# with open('Response.json', 'r') as file:
-#     RESPONSE_JSON = json.load(file)
+with open('Response.json', 'r') as file:
+    RESPONSE_JSON = json.load(file)
 
 #creating a title for the app
 st.title("MCQs Creator Application with LangChain 🦜⛓️")
@@ -39,7 +39,8 @@ with st.form("user_inputs"):
         with st.spinner("loading..."):
             try:
                 text=read_file(uploaded_file)
-                #Count tokens and the cost of API call
+                logging.info("File read successfully:{uploaded_file.name}") 
+                
                 
                 response=review_result(
                     {
@@ -47,9 +48,10 @@ with st.form("user_inputs"):
                     "number": mcq_count,
                     "subject":subject,
                     "tone": tone,
-                   
+                    "response_json": json.dumps(RESPONSE_JSON)
                     }
                 )
+                logging.info("Response received successfully")
                 #st.write(response)
             except Exception as e:
                 traceback.print_exception(type(e), e, e.__traceback__)

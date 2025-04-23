@@ -1,0 +1,16 @@
+[2025-04-23 22:41:17,029]42 root - INFO - File read successfully:{uploaded_file.name}
+[2025-04-23 22:41:20,791]54 root - INFO - Response received successfully
+[2025-04-23 22:44:29,581]42 root - INFO - File read successfully:{uploaded_file.name}
+[2025-04-23 22:44:36,304]54 root - INFO - Response received successfully
+[2025-04-23 22:52:24,855]42 root - INFO - File read successfully:{uploaded_file.name}
+[2025-04-23 22:52:27,036]95 root - ERROR - Error in review_result: Invalid json output: I am unable to create multiple choice questions based on the provided text. The text consists only of blank space and does not contain any information that can be used to formulate questions.
+For troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/OUTPUT_PARSING_FAILURE 
+[2025-04-23 22:52:27,051]54 root - INFO - Response received successfully
+[2025-04-23 22:53:23,001]42 root - INFO - File read successfully:{uploaded_file.name}
+[2025-04-23 22:53:24,331]95 root - ERROR - Error in review_result: Invalid json output: I'm sorry, but the provided text is empty. I need text content to create relevant multiple-choice questions. Please provide the text you want me to use for generating the quiz.
+For troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/OUTPUT_PARSING_FAILURE 
+[2025-04-23 22:53:24,334]54 root - INFO - Response received successfully
+[2025-04-23 22:59:50,144]42 root - INFO - File read successfully:{uploaded_file.name}
+[2025-04-23 22:59:55,501]54 root - INFO - Response received successfully
+[2025-04-23 23:05:53,654]42 root - INFO - File read successfully:{uploaded_file.name}
+[2025-04-23 23:05:59,512]54 root - INFO - Response received successfully

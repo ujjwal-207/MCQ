@@ -2,30 +2,33 @@ import os
 import json
 import traceback
 import pandas as pd
-from dotenv import load_dotenv
 from src.mcqgenerator.logger import logging
 from src.mcqgenerator.utils import read_file, get_table_data
-
-
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.prompts import PromptTemplate
-from langchain.chains import LLMChain
-from langchain_google_genai import GoogleGenerativeAI
-from langchain.chains import LLMChain
-
-from langchain_core.runnables import RunnableLambda, RunnableSequence  
-
+from langchain_core.output_parsers import JsonOutputParser
 llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash")
 
 TEMPLATE="""
 Text: {text}
-You are an expert MCQ maker. Given the above text,it is you job to \
-create a quiz of {number} multiple choice questions for {subject} students in {tone} tone. 
+You are an expert MCQ maker. Given the above text, create a quiz of {number} multiple choice questions for {subject} students in {tone} tone. 
 Make sure the questions are not repeated and check all the questions to be conforming the text as well.
-Make sure to format your response like RESPONSE_JSON below and use it as guide .\
-Ensure to make {number} MCQs
 
+Your response should be in the following JSON format:
+{{
+    "1": {{
+        "mcq": "question here",
+        "options": {{
+            "a": "choice 1",
+            "b": "choice 2",
+            "c": "choice 3",
+            "d": "choice 4"
+        }},
+        "correct": "correct_option_letter"
+    }}
+}}
 
+Ensure to make {number} MCQs and format the response exactly as shown above.
 """
 
 generation_prompt = PromptTemplate(
@@ -33,23 +36,26 @@ generation_prompt = PromptTemplate(
     template=TEMPLATE,
 )
 
-quiz_chain = generation_prompt | llm
+quiz_chain = generation_prompt | llm | JsonOutputParser()
 
 TEMPLATE2 = """
-You are an expert english grammarian and writer. Given a Multiple Choice Quiz for {subject} students.\
-You need to evaluate the complexity of the question and give a complete analysis of the the quiz. Only use at max 50 words for complexity 
-if the quiz is not at per with the congnitive and analytical abilities of the students,\
-update the quiz which needs to be changed and change the tone such that it is more suitable for the students.\
-Quiz_MCQs:
+You are an expert English grammarian and writer. Given a Multiple Choice Quiz for {subject} students.
+Review the quiz and provide analysis in the following JSON format:
+{{
+    "analysis": "Your 50-word analysis here",
+    "complexity_score": "score between 1-10",
+    "suggestions": "improvement suggestions if any"
+}}
+
+Quiz to review:
 {quiz}
-Check form an expert English Writer of the above quiz:
 """
 
 review_prompt = PromptTemplate(input_variables=["subject","quiz"],
     template=TEMPLATE2,
 )
 
-review_chain = review_prompt | llm
+review_chain = review_prompt | llm |  JsonOutputParser()
 
 
 file_path = "C:/Users/Ujjwal/Desktop/Projects/mcqgen/data.txt"
@@ -62,7 +68,9 @@ with open(file_path, "r") as file:
 
 def review_result(payload: dict):
     try:
-        text = payload["text"]
+        text = payload["text"].strip()
+        if not text:
+            raise ValueError("Text cannot be empty")
         number = payload["number"]
         subject = payload["subject"]
         tone = payload["tone"]
@@ -73,40 +81,23 @@ def review_result(payload: dict):
             "subject": subject,
             "tone": tone
         })
+        #  # Convert quiz_output to string if it's a dict
+        # quiz_str = json.dumps(quiz_output) if isinstance(quiz_output, dict) else quiz_output
 
         review_output = review_chain.invoke({
-            "quiz": quiz_output.content,
+            "quiz": quiz_output,
             "subject": subject
         })
 
         return {
-            "quiz": quiz_output.content,
-            "review": review_output.content
+            "quiz": quiz_output,
+            "review": review_output,
         }
     except Exception as e:
+        logging.error("Error in review_result: %s", str(e))
         traceback.print_exc()
         return {"error": str(e)}
 
-# def prepare_review_input(quiz_output, original_input):
-#     return {
-#         "quiz": quiz_output.content, 
-#         "subject": original_input["subject"]
-#     }
-evaluation_chain = (
-   
-#     quiz_chain
-#     | RunnableLambda(lambda quiz_output, config: {
-#        "text":TEXT,
-#        "number": NUMBER,
-#         "subject": SUBJECT,
-#         "tone": TONE,
-#         "quiz_output": quiz_chain.invoke
-
-#     })
-#     | RunnableLambda(lambda d: prepare_review_input(d["quiz_output"], d["original_input"]))
-#     | review_prompt
-#     | llm
- )
 
 
 
