@@ -54,11 +54,11 @@ with st.form("user_inputs"):
                 logging.info("Response received successfully")
                 #st.write(response)
             except Exception as e:
-                traceback.print_exception(type(e), e, e.__traceback__)
+                traceback.print_exception(type(e), e, e.__traceback__) #type is used to get the type of the exception and e is used to get the exception object and __traceback__ is used to get the traceback object
                 st.error("Error occurred while processing the file.")
 
             except Exception as e:
-                traceback.print_exception(type(e), e, e.__traceback__)
+                traceback.print_exception(type(e), e, e.__traceback__) #traceback is used to print the stack trace of the exception
                 st.error("Error")
 
             else:
@@ -66,15 +66,15 @@ with st.form("user_inputs"):
                     #Extract the quiz data from the response
                     quiz=response.get("quiz", None)
                     if quiz is not None:
-                        table_data=get_table_data(quiz)
-                        if table_data is not None:
-                            df=pd.DataFrame(table_data)
-                            df.index=df.index+1
-                            st.table(df)
+                        table_data=get_table_data(quiz) #get_table_date is a function that takes the quiz data and returns the table data in a list of dictionaries format || it passes the quiz data from the response to the get_table_data function to extract the quiz data from the response
+                        if table_data is not None: ##check if the table data is not None like empty
+                            df=pd.DataFrame(table_data) #convert the table data to a pandas dataframe || DataFrame is a 2-dimensional labeled data structure with columns of potentially different types
+                            df.index=df.index+1 #start the index from 1 instead of 0 because the index starts from 0 by default in pandas
+                            st.table(df) #display the table data in a table format using st.table function || st.table is used to display the dataframe in a table format
                             #Display the review in atext box as well
-                            st.text_area(label="Review", value=response["review"])
+                            st.text_area(label="Review", value=response["review"]) #display the review in a text area format using st.text_area function || st.text_area is used to display the review in a text area format
                         else:
-                            st.error("Error in the table data")
+                            st.error("Error in the table data")# #display the error message if the table data is None like empty
 
                 else:
                     st.write(response)

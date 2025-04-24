@@ -66,9 +66,9 @@ with open(file_path, "r") as file:
 
 
 
-def review_result(payload: dict):
+def review_result(payload: dict): #payload is a dictionary containing the text, number of questions, subject, and tone
     try:
-        text = payload["text"].strip()
+        text = payload["text"].strip()#stripe removed leading and trailing spaces like whitespaces
         if not text:
             raise ValueError("Text cannot be empty")
         number = payload["number"]
